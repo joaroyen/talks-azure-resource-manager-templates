@@ -162,6 +162,10 @@ class: center, middle, inverse
 # Introduksjon til 
 # Azure Resource Manager Templates
 
+## Joar Øyen - Acando
+## @joaroyen
+## https://github.com/joaroyen
+
 ???
 Tittel: Hvordan kan vi be Azure om å opprette det du trenger av ressurser?
 
@@ -171,6 +175,12 @@ Azure Resource Manager (ARM) lar deg håndtere Azure ressursene du trenger i din
 I denne sesjonen vil vi vise hvordan du går frem for å lage maler for dine løsninger, hvilke verktøy som er tilgjengelig og ikke minst tips og triks basert på en nybegynners erfaringer med bruk av ARM-maler. ARM er per i dag en løsning som ikke dekker alle behov 100% og dere vil få vite om hvilke hull som må tettes på andre måter og når ARM maler eventuelt ikke er egnet.
 
 Demo skript:
+
+PowerShell:
+Login-AzureRmAccount
+Select-AzureRmSubscription -SubscriptionName Mine
+Get-Command *rmresource*
+Get-AzureRmResourceProvider -ListAvailable
 
 Linker:
 https://www.azurelens.net/
