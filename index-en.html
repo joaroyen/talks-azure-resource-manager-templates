@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Introduction to Azure Resource Manager Templates</title>
+    <meta charset="utf-8">
+    <style>
+      @import url(https://fonts.googleapis.com/css?family=Droid+Serif);
+      @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+      @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+
+      body {
+        font-family: 'Droid Serif';
+      }
+      h1, h2, h3 {
+        font-family: 'Yanone Kaffeesatz';
+        font-weight: 400;
+        margin-bottom: 0;
+      }
+      .remark-slide-content h1 { font-size: 3em; }
+      .remark-slide-content h2 { font-size: 2em; }
+      .remark-slide-content h3 { font-size: 1.6em; }
+      .footnote {
+        position: absolute;
+        bottom: 3em;
+      }
+      li, p { line-height: 1.618em; }
+      .red { color: #fa0000; }
+      .gray { color: #cccccc; }
+      .large { font-size: 2em; }
+      a, a > code {
+        color: rgb(249, 38, 114);
+        text-decoration: none;
+      }
+      code {
+        background: #e7e8e2;
+        border-radius: 5px;
+      }
+      .remark-code, .remark-inline-code { 
+        font-family: 'Ubuntu Mono'; 
+        line-height: 1.25em;
+      }
+      .remark-code-line-highlighted {
+         background-color: #373832; 
+      }
+      .pull-left {
+        float: left;
+        width: 47%;
+      }
+      .pull-right {
+        float: right;
+        width: 47%;
+      }
+      .pull-right ~ p {
+        clear: both;
+      }
+      #slideshow .slide .content code {
+        font-size: 0.8em;
+      }
+      #slideshow .slide .content pre code {
+        font-size: 0.9em;
+        padding: 15px;
+      }
+      .inverse {
+        background: #272822;
+        color: #777872;
+        text-shadow: 0 0 20px #333;
+      }
+      .inverse h1, .inverse h2 {
+        color: #f3f3f3;
+        line-height: 1.618em;
+      }
+
+      /* Slide-specific styling */
+      #slide-inverse .footnote {
+        bottom: 12px;
+        left: 20px;
+      }
+      #slide-how .slides {
+        font-size: 0.9em;
+        position: absolute;
+        top:  151px;
+        right: 140px;
+      }
+      #slide-how .slides h3 {
+        margin-top: 0.2em;
+      }
+      #slide-how .slides .first, #slide-how .slides .second {
+        padding: 1px 20px;
+        height: 90px;
+        width: 120px;
+        -moz-box-shadow: 0 0 10px #777;
+        -webkit-box-shadow: 0 0 10px #777;
+        box-shadow: 0 0 10px #777;
+      }
+      #slide-how .slides .first {
+        background: #fff;
+        position: absolute;
+        top: 20%;
+        left: 20%;
+        z-index: 1;
+      }
+      #slide-how .slides .second {
+        position: relative;
+        background: #fff;
+        z-index: 0;
+      }
+
+      /* Two-column layout */
+      .left-column {
+        color: #777;
+        width: 20%;
+        height: 92%;
+        float: left;
+      }
+        .left-column h2:last-of-type, .left-column h3:last-child {
+          color: #000;
+        }
+      .right-column {
+        width: 75%;
+        float: right;
+        padding-top: 1em;
+      }
+
+      img {
+        max-width: 100%;
+        max-height: 450px;
+      }
+
+      .icon > img {
+        width: 43px;
+        height: 43px;
+      }
+
+      pre {
+        white-space: pre-wrap; 
+      }
+
+      @page {
+        size: 908px 681px;
+        margin: 0;
+      }
+
+      @media print {
+        .remark-slide-scaler {
+          width: 100% !important;
+          height: 100% !important;
+          transform: scale(1) !important;
+          top: 0 !important;
+          left: 0 !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <textarea id="source">
+name: inverse
+layout: true
+class: center, middle, inverse
+
+---
+
+# Introduction to
+# Azure Resource Manager Templates
+
+## Joar Øyen
+## @joaroyen
+## https://github.com/joaroyen
+
+???
+
+PowerShell:
+Login-AzureRmAccount
+Select-AzureRmSubscription -SubscriptionName Mine
+Get-Command *rmresource*
+Get-AzureRmResourceProvider -ListAvailable
+
+Linker:
+https://www.azurelens.net/
+https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-manager-supported-services
+https://github.com/Azure/azure-quickstart-templates/tree/master/docker-neo4j
+
+---
+
+layout: true
+class: center, middle
+
+---
+
+layout: false
+
+# Contents
+
+1. What is Azure Resource Manager (ARM)
+2. what are ARM Templates?
+3. Tools
+4. Tips and tricks
+5. Challenges
+6. Summary
+
+---
+
+class: center, middle, inverse
+
+# .icon[![](icons\ResourceGroup_COLOR.png)] What is Azure Resource Manager (ARM)
+
+---
+
+# .icon[![](icons\ResourceGroup_COLOR.png)] Application life-cycle container
+![image](images\ResourceGroups.png)
+
+---
+
+# .icon[![](icons\ResourceGroup_COLOR.png)] Consistent management
+![image](images\ConsistentManagement.png)
+
+---
+
+# .icon[![](icons\ResourceGroup_COLOR.png)] Extensions and integrations
+
+* Include your own code
+* Scripting
+* Integrations with other tools
+  * Virtual Machine Manager
+  * PowerShell Desired State Configuration
+  * Source code control
+  * Chef
+  * Puppet
+  * Octopus Deploy
+
+---
+
+class: center, middle, inverse
+
+# .icon[![](icons\Document DB file.svg)] What are Azure Resource Manager Templates?
+
+---
+
+# .icon[![](icons\Document DB file.svg)] Declarative specification
+![image](images\ResourceGroupTemplate.png)
+
+---
+
+# .icon[![](icons\Document DB file.svg)] Structure
+``` json
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0", 
+  "parameters": {
+  },
+  "variables": {
+  },
+  "resources": [{
+      "type": "...",
+      "name": "...",
+      "tags": {},
+      "properties": {},
+      "resources": [],
+      "dependsOn": []
+    },
+    ...
+  ],
+  "outputs": {
+  }
+}
+```
+
+---
+
+# .icon[![](icons\Document DB file.svg)] Deployment strategies
+
+* Incremental
+  * New resources are created
+  * Existing resources are modified
+
+---
+
+# .icon[![](icons\Document DB file.svg)] Deployment strategies
+
+* Incremental
+  * New resources are created
+  * Existing resources are modified
+* Complete
+  * New resources are created
+  * Existing resources are modified
+  * Resources which are not listed in the template is **deleted**
+
+---
+
+# .icon[![](icons\Document DB file.svg)] Deployment strategies
+
+* Incremental
+  * New resources are created
+  * Existing resources are modified
+* Complete
+  * New resources are created
+  * Existing resources are modified
+  * Resources which are not listed in the template is **deleted**
+* Incremental can be combined with PowerShell commands for explicit deletion of resources
+
+---
+
+class: center, middle, inverse
+
+# .icon[![](icons\Tools.svg)] Tools
+
+
+
+** Examples in this presentation are not complete and not necessary 100% correct **
+
+---
+
+# .icon[![](icons\Tools.svg)] Command line
+
+* PowerShell
+``` posh
+C:\> Test-AzureRmResourceGroupDeployment
+```
+* Cross platform CLI
+``` bash
+$ azure group template validate
+```
+
+---
+
+# .icon[![](icons\Tools.svg)] API
+
+* .NET
+
+``` C#
+var resourceManagementClient = new ResourceManagementClient(credentials);
+...
+var deployment = new Deployment();
+
+deployment.Properties = new DeploymentProperties
+{
+    Mode = DeploymentMode.Incremental,
+    Template = templateFileContents,
+    Parameters = parameterFileContents
+};
+
+var deploymentResult = resourceManagementClient.Deployments.CreateOrUpdate(
+  resourceGroupName, deploymentName, deployment);
+
+```
+
+* REST API can be used directly
+
+---
+
+# .icon[![](icons\Tools.svg)] Export from Azure portal
+![](images\AzurePortalAutomationScriptExport.png)
+
+---
+
+# .icon[![](icons\Tools.svg)] Export from Azure portal
+![](images\AzurePortalAutomationScriptExport-ErrorDetails.png)
+
+---
+
+# .icon[![](icons\Tools.svg)] Visual Studio Code
+
+[Azure Resource Manager Tools for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=msazurermtools.azurerm-vscode-tools)
+![](images\AzureResourceManagerToolsInVisualStudioCode.png)
+Installation tips:[https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-manager-vs-code](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-manager-vs-code)
+
+---
+
+# .icon[![](icons\Tools.svg)] Visual Studio Code
+
+* Help
+![](images\Visual Studio Code ARM hjelp.png)
+* IntelliSense
+![](images\Visual Studio Code ARM Intellisense.png)
+
+---
+
+# .icon[![](icons\Tools.svg)] Visual Studio
+
+[Azure Resource Manager Visual Studio Project](https://azure.microsoft.com/en-us/documentation/articles/vs-azure-tools-resource-groups-deployment-projects-create-deploy/)
+![](images\Visual Studio ARM prosjekt.png)
+
+---
+
+# .icon[![](icons\Tools.svg)] On-line visualization and editing
+
+* ARM Visualizer
+
+  [http://armviz.io/designer](http://armviz.io/designer)
+* Azure Lens
+
+  [https://www.azurelens.net/](https://www.azurelens.net/)
+
+---
+
+class: center, middle, inverse
+
+# Tips and tricks
+
+---
+
+# Tips and tricks
+
+* Save the template in source code control
+* Start with a pre-made template or export from portal
+* Use at tool with IntelliSense and snippets
+* Validate template before publishing
+  ``` posh
+  C:\> Test-AzureRmResourceGroupDeployment
+  ```
+* Break down the template into manageable and reusable pieces
+
+---
+
+# Tips and tricks: Parameters
+
+* Use as few parameters as possible
+  ``` json
+  "parameters": {
+      "tenant": {
+          "type": "string"
+      },
+      "environment": {
+          "type": "string",
+          "defaultValue": "test",
+          "allowedValues": [ "dev", "test", "prod" ],
+          "metadata": {
+            "description": "The named environment for this deployment"
+          }
+      }
+  }
+  ```
+
+---
+
+# Tips and tricks: Variables
+
+* Derive from parameters, other variables, functions and conventions
+  ``` json
+  "variables": {
+      "jobs": {
+          "someJob": {
+              "name": "[concat(variables('jobCollection-name'), '/convention-SomeJobName-', parameters('tenant'), '-', parameters('environment'))]"
+          }
+      },
+      "serviceBusNamespace": {
+          "name": "[concat('convention-', parameters('tenant'), '-', parameters('environment'))]"
+      },
+      "storageAccount-name": "[concat('prefix', parameters('tenant'), '1', parameters('environment'))]",
+      "location": "[resourceGroup().location]",
+      "sbVersion": "2015-08-01",
+      "authRuleResourceId": "[resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', variables('serviceBusNamespace').name, variables('defaultSASKeyName'))]"
+  }
+  ```
+
+---
+
+# Tips and tricks: Duplication of resources
+
+``` json
+"parameters": {
+  "numberOfWebsites": {
+    "type": "int",
+    "defaultValue": 2
+  }
+},
+"resources": [
+  {
+    "name": "[concat('website-', copyIndex())]",
+    ...
+    "copy": {
+      "name": "websitescopy",
+      "count": "[parameters('numberOfWebsites')]"
+    }
+  }
+]
+
+```
+
+---
+
+# Tips and tricks: Output
+
+* Example: Use the output from creating a Service Bus namespace when creating an Azure Scheduler trigger
+  ``` json
+  {
+    "type": "Microsoft.Scheduler/jobCollections/jobs",
+    "name": "[variables('jobs').someJob.name]",
+    "properties": {
+        "action": {
+            "request": {
+                "uri": "[listkeys(variables('authRuleResourceId'), variables('sbVersion')).primaryConnectionString]",
+                ...
+  ```
+---
+
+# Tips and tricks: Output
+
+* Output values can also be used in PowerShell
+  ``` json
+    "outputs": {
+      "namespaceConnectionString": {
+          "type": "string",
+          "value": "[listkeys(variables('authRuleResourceId'), variables('sbVersion')).primaryConnectionString]"
+      }
+  }
+  ```
+
+  ``` posh
+    $tempVar = New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile $templateFilePath -TemplateParameterFile $parametersFilePath;
+    $sbqconstr = [string]$tempVar.Outputs["namespaceConnectionString"].Value;
+  ``` 
+
+---
+
+# Tips and tricks: Dependencies
+
+* Dependencies must be specified even for nested resources
+  ``` json
+  {
+      "comments": "ServiceBus",
+      "type": "Microsoft.ServiceBus/namespaces",
+      ...
+      "name": "[variables('serviceBusNamespace').name]",
+      "resources": [{
+          "name": "[variables('serviceBusQueue-name')]",
+          "type": "Queues",
+          ...
+          "dependsOn": [
+              "[concat('Microsoft.ServiceBus/namespaces/', variables('serviceBusNamespace').name)]"
+          ]
+      }]
+      ,
+      "dependsOn": []
+  }
+  ```
+
+---
+
+class: center, middle, inverse
+
+# Challenges
+
+---
+
+# Challenges: Some resources cannot be managed by ARM
+
+* "Classic" resource types 
+* Storage (Storage Account be created using ARM)
+* New resource types in preview
+
+---
+
+# Challenges: Templates generated from the portal...
+
+* is difficult to maintain
+  * One-time generation
+  * Non-intelligent use of parameters
+  * No variables
+  * No nesting of resources
+* contains unnecessary settings
+* contains errors
+  * Example: The status of Service Bus namespace is set as active, which result in failures when creating topics and queues that depend on this namespace
+
+---
+
+# Challenges: Development
+
+* It can be difficult to get help on-line
+  * StackOverflow has few questions and even less [answers](http://stackoverflow.com/questions/tagged/azure-resource-manager)
+* Trial and error take a long time
+* It is easy to end up in a situations where you have more resources than intended
+  * Using duplication
+  * After name changes
+
+---
+
+class: center, middle, inverse
+
+# Resources
+
+---
+
+# Resources
+
+.left-column[
+  Start here
+]
+.right-column[
+  [Authoring Azure Resource Manager templates](https://azure.microsoft.com/en-us/documentation/articles/resource-group-authoring-templates/)
+  ![](images\Authoring Azure Resource Manager templates.png)
+]
+
+---
+
+# Resources
+
+.left-column[
+  .gray[Start here]
+
+  Community templates
+]
+.right-column[
+  [Azure Resource Manager QuickStart Templates](https://azure.microsoft.com/en-us/documentation/templates/)
+  ![](images\Azure Resource Manager QuickStart Templates.png)
+]
+
+---
+
+# Resources
+
+.left-column[
+  .gray[Start here]
+
+  .gray[Community templates]
+
+  Pluralsight course
+]
+.right-column[
+  [Azure Resource Manager Deep Dive](https://app.pluralsight.com/library/courses/azure-resource-manager-deep-dive/table-of-contents)
+  ![](images\Azure Resource Manager Deep Dive.png)
+]
+
+---
+
+# Resources
+
+.left-column[
+  .gray[Start here]
+
+  .gray[Community templates]
+
+  .gray[Pluralsight course]
+
+  Other resources
+]
+.right-column[
+* [Resource Manager providers, regions, API versions and schemas](https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-manager-supported-services)
+
+  With link to schema for the selected ARM resource type.
+* [Patterns for designing Azure Resource Manager templates](https://docs.microsoft.com/en-us/azure/azure-resource-manager/best-practices-resource-manager-design-templates)
+]
+
+---
+
+class: center, middle, inverse
+
+# Summary
+
+---
+
+# Why ARM-templates
+* Declarative syntax: You describe what, not how
+* Big push from Microsoft
+* Creation and configuration can be automated and are repeatable
+* Accessible examples
+
+---
+
+# Why ARM-templates
+* Declarative syntax: You describe what, not how
+* Big push from Microsoft
+* Creation and configuration can be automated and are repeatable
+* Accessible examples
+
+
+# Why not ARM-templates
+* Declarative syntax: Is more limiting than using API or PowerShell
+* JSON syntax is readable for humans, but complexity in structure require developer experience to create and modify
+* Some resources cannot be managed by ARM currently
+
+---
+
+class: center, middle, inverse
+
+# Questions ?
+
+
+    </textarea>
+    <script src="https://remarkjs.com/downloads/remark-latest.min.js">
+    </script>
+    <script>
+      var slideshow = remark.create();
+    </script>
+  </body>
+</html>
